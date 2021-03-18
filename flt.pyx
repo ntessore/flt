@@ -25,6 +25,8 @@ issue on GitHub if you would like to see anything added.
 Reference/API
 -------------
 
+.. currentmodule:: flt
+
 .. autosummary::
    :toctree: api
    :nosignatures:
@@ -64,7 +66,7 @@ def dlt(a, closed=False):
     The function must be given at the points :math:`\cos(\theta)` returned by
     :func:`flt.theta`.  These can be distributed either over the open interval
     :math:`\theta \in (0, \pi)`, or over the closed interval :math:`\theta \in
-    [0, \pi]`, in which case :math:`\theta_0 = 0`\ and :math:`\theta_{n-1} =
+    [0, \pi]`, in which case :math:`\theta_0 = 0` and :math:`\theta_{n-1} =
     \pi`.
 
     Parameters
