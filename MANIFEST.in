@@ -1,0 +1,3 @@
+include flt.pyx
+include dctdlt.c
+exclude flt.c
