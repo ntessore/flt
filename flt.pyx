@@ -52,8 +52,10 @@ import numpy as np
 from scipy.fft import dct, idct
 
 cdef extern from "dctdlt.c":
-    void dctdlt(unsigned int, const double*, double*)
-    void dltdct(unsigned int, const double*, double*)
+    void dctdlt(unsigned int, unsigned int, const double*,
+                unsigned int, double*)
+    void dltdct(unsigned int, unsigned int, const double*,
+                unsigned int, double*)
 
 
 def dlt(a, closed=False):
@@ -105,7 +107,7 @@ def dlt(a, closed=False):
     transform (DCT) using an inverse DCT-III for the open interval, or an
     inverse DCT-I for the closed interval.
 
-    Second, the DCT coefficients are transformed to the DLT coefficientsu using
+    Second, the DCT coefficients are transformed to the DLT coefficients using
     a recursive version of the matrix relation given by [1]_.
 
     References
@@ -128,17 +130,13 @@ def dlt(a, closed=False):
         dcttype = 3
 
     # compute the DCT coefficients
-    a = idct(a, type=dcttype, axis=-1, norm=None)
+    b = idct(a, type=dcttype, axis=-1, norm=None)
 
-    # this holds the DLT coefficients
-    b = np.empty(n, dtype=float)
-
-    # these are memviews on a and b for C interop
-    cdef double[::1] a_ = a
+    # memview for C interop
     cdef double[::1] b_ = b
 
     # transform DCT coefficients to DLT coefficients using C function
-    dctdlt(n, &a_[0], &b_[0])
+    dctdlt(n, 1, &b_[0], 1, &b_[0])
 
     # done
     return b
@@ -217,18 +215,15 @@ def idlt(b, closed=False):
     # this holds the DCT coefficients
     a = np.empty(n, dtype=float)
 
-    # these are memviews on a and b for C interop
+    # memviews for C interop
     cdef double[::1] a_ = a
     cdef double[::1] b_ = b
 
     # transform DLT coefficients to DCT coefficients using C function
-    dltdct(n, &b_[0], &a_[0])
+    dltdct(n, 1, &b_[0], 1, &a_[0])
 
     # perform the DCT
-    xi = dct(a, type=dcttype, axis=-1, norm=None)
-
-    # done
-    return xi
+    return dct(a, type=dcttype, axis=-1, norm=None, overwrite_x=True)
 
 
 def dltmtx(n, closed=False):
@@ -268,22 +263,18 @@ def dltmtx(n, closed=False):
     else:
         dcttype = 3
 
-    # compute the DCT matrix row by row (not column by column)
-    a = idct(np.eye(n), type=dcttype, axis=1, norm=None)
+    # compute the DCT matrix
+    a = idct(np.eye(n), type=dcttype, axis=0, norm=None, overwrite_x=True)
 
-    # this holds the DLT matrix
-    b = np.empty((n, n), dtype=float)
-
-    # these are memviews on a and b for C interop
+    # memview for C interop
     cdef double[:, ::1] a_ = a
-    cdef double[:, ::1] b_ = b
 
-    # transform DCT row to DLT row using C function
+    # transform DCT column to DLT column using C function
     for i in range(n):
-        dctdlt(n, &a_[i, 0], &b_[i, 0])
+        dctdlt(n, n, &a_[0, i], n, &a_[0, i])
 
-    # return transpose since we worked on rows, not columns
-    return b.T
+    # done
+    return a
 
 
 def idltmtx(n, closed=False):
@@ -325,22 +316,17 @@ def idltmtx(n, closed=False):
         dcttype = 3
 
     # this is the input matrix
-    b = np.eye(n, dtype=float)
+    a = np.eye(n, dtype=float)
 
-    # this holds the DLT part of the matrix
-    a = np.empty((n, n), dtype=float)
-
-    # these are memviews on a and b for C interop
+    # memview for C interop
     cdef double[:, ::1] a_ = a
-    cdef double[:, ::1] b_ = b
 
-    # transform DLT row to DCT row using C function
+    # transform DLT unit column to DCT column using C function
     for i in range(n):
-        dltdct(n, &b_[i, 0], &a_[i, 0])
+        dltdct(n, n, &a_[0, i], n, &a_[0, i])
 
     # multiply by DCT matrix
-    # return transpose since we worked on rows, not columns
-    return dct(a, type=dcttype, axis=1, norm=None).T
+    return dct(a, type=dcttype, axis=0, norm=None, overwrite_x=True)
 
 
 def theta(n, closed=False):
