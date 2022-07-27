@@ -18,7 +18,7 @@
 //     Computing, 12(1), 158-179.
 //
 
-#define DCTDLT_VERSION 20210318L
+#define DCTDLT_VERSION 20220727L
 
 
 // dctdlt
@@ -42,29 +42,29 @@ void dctdlt(unsigned int n, unsigned int stride_in, const double* dct,
             unsigned int stride_out, double* dlt)
 {
     double a, b;
-    unsigned int k, l;
+    unsigned int i, j;
 
-    // first row
-    a = 1.;
-    b = a;
-    *dlt = b*dct[0];
-    for(k = 2; k < n; k += 2)
+    a = 0.5;
+    b = 1.;
+    if(n > 0)
     {
-        b *= (k-3.)/(k+1.);
-        *dlt += 2*b*dct[k*stride_in];
+        *dlt = b*dct[0];
+        for(j = 2; j < n; j += 2)
+        {
+            b *= (j-3.)/(j+1.);
+            *dlt += b*dct[j*stride_in];
+        }
     }
-
-    // remaining rows
-    for(l = 1; l < n; ++l)
+    for(i = 1; i < n; i += 1)
     {
         dlt += stride_out;
-        a /= (1. - 0.5/l);
+        a /= (1. - 0.5/i);
         b = a;
-        *dlt = b*dct[l*stride_in];
-        for(k = l+2; k < n; k += 2)
+        *dlt = b*dct[i*stride_in];
+        for(j = i+2; j < n; j += 2)
         {
-            b *= (k*(k+l-2.)*(k-l-3.))/((k-2.)*(k+l+1.)*(k-l));
-            *dlt += b*dct[k*stride_in];
+            b *= (j*(j+i-2.)*(j-i-3.))/((j-2.)*(j+i+1.)*(j-i));
+            *dlt += b*dct[j*stride_in];
         }
     }
 }
@@ -91,29 +91,29 @@ void dltdct(unsigned int n, unsigned int stride_in, const double* dlt,
             unsigned int stride_out, double* dct)
 {
     double a, b;
-    unsigned int k, l;
+    unsigned int i, j;
 
-    // first row
-    a = 1.;
-    b = a;
-    *dct = b*dlt[0];
-    for(l = 2; l < n; l += 2)
+    a = 2.;
+    b = 1.;
+    if(n > 0)
     {
-        b *= ((l-1.)*(l-1.))/(l*l);
-        *dct += b*dlt[l*stride_in];
+        *dct = b*dlt[0];
+        for(j = 2; j < n; j += 2)
+        {
+            b *= ((j-1.)*(j-1.))/(j*j);
+            *dct += b*dlt[j*stride_in];
+        }
     }
-
-    // remaining rows
-    for(k = 1; k < n; ++k)
+    for(i = 1; i < n; i += 1)
     {
         dct += stride_out;
-        a *= (1. - 0.5/k);
+        a *= (1. - 0.5/i);
         b = a;
-        *dct = b*dlt[k*stride_in];
-        for(l = k+2; l < n; l += 2)
+        *dct = b*dlt[i*stride_in];
+        for(j = i+2; j < n; j += 2)
         {
-            b *= ((l-k-1.)*(l+k-1.))/((l-k)*(l+k));
-            *dct += b*dlt[l*stride_in];
+            b *= ((j-i-1.)*(j+i-1.))/((j-i)*(j+i));
+            *dct += b*dlt[j*stride_in];
         }
     }
 }
