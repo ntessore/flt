@@ -4,27 +4,27 @@ import pytest
 from flt import dlt, idlt, theta
 
 
-@pytest.mark.parametrize('n', [2, 5, 10, 11, 100, 101, 1000, 1001])
+@pytest.mark.parametrize('n', [1, 2, 5, 10, 11, 100, 101, 1000, 1001])
 @pytest.mark.parametrize('closed', [False, True])
 def test_dlt(n, closed):
+    if n == 1 and closed:
+        pytest.skip('closed FFT requires n > 1')
+
     t = theta(n, closed=closed)
-    for i in range(n):
-        a = np.zeros(n)
-        a[i] = 1
+    a = np.random.uniform(0, 1, size=n)
+    f = np.polynomial.legendre.legval(np.cos(t), a)
 
-        f = np.polynomial.legendre.legval(np.cos(t), a)
-
-        np.testing.assert_allclose(dlt(f, closed=closed), a, rtol=0, atol=1e-12)
+    np.testing.assert_allclose(dlt(f, closed=closed), a)
 
 
-@pytest.mark.parametrize('n', [2, 5, 10, 11, 100, 101, 1000, 1001])
+@pytest.mark.parametrize('n', [1, 2, 5, 10, 11, 100, 101, 1000, 1001])
 @pytest.mark.parametrize('closed', [False, True])
 def test_idlt(n, closed):
+    if n == 1 and closed:
+        pytest.skip('closed FFT requires n > 1')
+
     t = theta(n, closed=closed)
-    for i in range(n):
-        a = np.zeros(n)
-        a[i] = 1
+    a = np.random.uniform(0, 1, size=n)
+    f = np.polynomial.legendre.legval(np.cos(t), a)
 
-        f = np.polynomial.legendre.legval(np.cos(t), a)
-
-        np.testing.assert_allclose(idlt(a, closed=closed), f, rtol=0, atol=1e-10)
+    np.testing.assert_allclose(idlt(a, closed=closed), f)
