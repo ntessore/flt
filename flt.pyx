@@ -130,7 +130,11 @@ def dlt(a, closed=False):
         dcttype = 3
 
     # compute the DCT coefficients
-    b = idct(a, type=dcttype, axis=-1, norm=None)
+    b = idct(a, type=dcttype, axis=-1, norm='backward')
+
+    # fix last coefficient for DCT-I
+    if closed:
+        b[-1] /= 2
 
     # memview for C interop
     cdef double[::1] b_ = b
@@ -222,8 +226,12 @@ def idlt(b, closed=False):
     # transform DLT coefficients to DCT coefficients using C function
     dltdct(n, 1, &b_[0], 1, &a_[0])
 
+    # fix last coefficient for DCT-I
+    if closed:
+        a[-1] *= 2
+
     # perform the DCT
-    return dct(a, type=dcttype, axis=-1, norm=None, overwrite_x=True)
+    return dct(a, type=dcttype, axis=-1, norm='backward', overwrite_x=True)
 
 
 def dltmtx(n, closed=False):
