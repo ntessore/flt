@@ -18,7 +18,7 @@
 //     Computing, 12(1), 158-179.
 //
 
-#define DCTDLT_VERSION 20220727L
+#define DCTDLT_VERSION 20221017L
 
 
 // dctdlt
@@ -51,7 +51,7 @@ void dctdlt(unsigned int n, unsigned int stride_in, const double* dct,
         *dlt = dct[0];
         for(j = 2; j < n; j += 2)
         {
-            b *= (j-3.)/(j+1.);
+            b *= (1 - 4./(j+1.));
             *dlt += b*dct[j*stride_in];
         }
     }
@@ -63,7 +63,7 @@ void dctdlt(unsigned int n, unsigned int stride_in, const double* dct,
         *dlt = b*dct[i*stride_in];
         for(j = i+2; j < n; j += 2)
         {
-            b *= (j*(j+i-2.)*(j-i-3.))/((j-2.)*(j+i+1.)*(j-i));
+            b *= (1. + 2./(j-2.)) * (1. - 3./(j+i+1.)) * (1. - 3./(j-i));
             *dlt += b*dct[j*stride_in];
         }
     }
@@ -100,7 +100,7 @@ void dltdct(unsigned int n, unsigned int stride_in, const double* dlt,
         *dct = dlt[0];
         for(j = 2; j < n; j += 2)
         {
-            b *= ((j-1.)*(j-1.))/(j*j);
+            b *= (1. - 1./j)*(1. - 1./j);
             *dct += b*dlt[j*stride_in];
         }
     }
@@ -112,7 +112,7 @@ void dltdct(unsigned int n, unsigned int stride_in, const double* dlt,
         *dct = b*dlt[i*stride_in];
         for(j = i+2; j < n; j += 2)
         {
-            b *= ((j-i-1.)*(j+i-1.))/((j-i)*(j+i));
+            b *= (1. - 1./(j-i)) * (1. - 1./(j+i));
             *dct += b*dlt[j*stride_in];
         }
     }
