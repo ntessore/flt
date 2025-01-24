@@ -1,57 +1,11 @@
-# flt: fast Legendre transform
-#
-# author: Nicolas Tessore <n.tessore@ucl.ac.uk>
-# license: MIT
-#
 # cython: language_level=3, boundscheck=False, embedsignature=True
 #
-'''
-
-Discrete Legendre Transform (:mod:`flt`)
-========================================
-
-This is a minimal Python package for fast discrete Legendre transforms (DLTs).
-The implementation uses a recursive version of the matrix relations by Alpert &
-Rokhlin (1991) to compute the DLT via a discrete cosine transform (DCT).
-
-The package can be installed using pip::
-
-    pip install flt
-
-Current functionality covers the absolutely minimal use case.  Please open an
-issue on GitHub if you would like to see anything added.
-
-
-Reference/API
--------------
-
-.. currentmodule:: flt
-
-.. autosummary::
-   :toctree: api
-   :nosignatures:
-
-   dlt
-   idlt
-   dltmtx
-   idltmtx
-   theta
-
-'''
-
-__all__ = [
-    'dlt',
-    'idlt',
-    'dltmtx',
-    'idltmtx',
-    'theta',
-]
 
 
 import numpy as np
 from scipy.fft import dct, idct
 
-cdef extern from "dctdlt.c":
+cdef extern:
     void dctdlt(unsigned int, unsigned int, const double*,
                 unsigned int, double*)
     void dltdct(unsigned int, unsigned int, const double*,
@@ -278,6 +232,7 @@ def dltmtx(n, closed=False):
     cdef double[:, ::1] a_ = a
 
     # transform DCT column to DLT column using C function
+    cdef int i
     for i in range(n):
         dctdlt(n, n, &a_[0, i], n, &a_[0, i])
 
@@ -330,6 +285,7 @@ def idltmtx(n, closed=False):
     cdef double[:, ::1] a_ = a
 
     # transform DLT unit column to DCT column using C function
+    cdef int i
     for i in range(n):
         dltdct(n, n, &a_[0, i], n, &a_[0, i])
 

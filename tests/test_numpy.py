@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from flt import dlt, idlt, theta
+from flt.numpy import dlt, idlt, theta
 
 
 @pytest.mark.parametrize('n', [1, 2, 5, 10, 11, 100, 101, 1000, 1001])
