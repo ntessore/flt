@@ -1,30 +1,22 @@
 import numpy as np
 import pytest
 
-from flt.numpy import dlt, idlt, theta
+import flt
 
 
-@pytest.mark.parametrize('n', [1, 2, 5, 10, 11, 100, 101, 1000, 1001])
-@pytest.mark.parametrize('closed', [False, True])
-def test_dlt(n, closed):
-    if n == 1 and closed:
-        pytest.skip('closed FFT requires n > 1')
-
-    t = theta(n, closed=closed)
+@pytest.mark.parametrize("n", [1, 2, 5, 10, 11, 100, 101, 1000, 1001])
+def test_dlt(n):
+    t = flt.theta(n)
     a = np.random.uniform(0, 1, size=n)
     f = np.polynomial.legendre.legval(np.cos(t), a)
 
-    np.testing.assert_allclose(dlt(f, closed=closed), a)
+    np.testing.assert_allclose(flt.dlt(f), a)
 
 
-@pytest.mark.parametrize('n', [1, 2, 5, 10, 11, 100, 101, 1000, 1001])
-@pytest.mark.parametrize('closed', [False, True])
-def test_idlt(n, closed):
-    if n == 1 and closed:
-        pytest.skip('closed FFT requires n > 1')
-
-    t = theta(n, closed=closed)
+@pytest.mark.parametrize("n", [1, 2, 5, 10, 11, 100, 101, 1000, 1001])
+def test_idlt(n):
+    t = flt.theta(n)
     a = np.random.uniform(0, 1, size=n)
     f = np.polynomial.legendre.legval(np.cos(t), a)
 
-    np.testing.assert_allclose(idlt(a, closed=closed), f)
+    np.testing.assert_allclose(flt.idlt(a), f)

@@ -12,7 +12,7 @@ version = "2025.1"
 maintainers = [
     { name = "Nicolas Tessore", email = "n.tessore@ucl.ac.uk" },
 ]
-description = "Fast Legendre transform"
+description = "Fast Legendre transform for NumPy and JAX"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -25,6 +25,17 @@ dependencies = [
 ]
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { text = "MIT" }
+
+[project.optional-dependencies]
+test = [
+    "pytest>=6.0",
+]
+doc = [
+    "sphinx",
+    "furo",
+    "sphinxcontrib-katex",
+    "numpydoc",
+]
 
 [project.urls]
 Homepage = "https://github.com/ntessore/flt"
@@ -39,4 +50,4 @@ include-package-data = false
 
 [[tool.setuptools.ext-modules]]
 name = "flt.numpy"
-sources = ["src/flt/base.pyx", "src/dctdlt.c"]
+sources = ["src/flt/numpy.pyx", "src/dctdlt.c"]

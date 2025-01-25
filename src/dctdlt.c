@@ -44,11 +44,11 @@ void dctdlt(unsigned int n, unsigned int stride_in, const double* dct,
     double a, b;
     unsigned int i, j;
 
-    a = 1.;
-    b = 2.;
+    a = 0.5/n;
+    b = 1./n;
     if(n > 0)
     {
-        *dlt = dct[0];
+        *dlt = dct[0] / (2.*n);
         for(j = 2; j < n; j += 2)
         {
             b *= (1 - 4./(j+1.));
@@ -93,11 +93,11 @@ void dltdct(unsigned int n, unsigned int stride_in, const double* dlt,
     double a, b;
     unsigned int i, j;
 
-    a = 1.;
-    b = 1.;
+    a = 2.*n;
+    b = 2.*n;
     if(n > 0)
     {
-        *dct = dlt[0];
+        *dct = b * dlt[0];
         for(j = 2; j < n; j += 2)
         {
             b *= (1. - 1./j)*(1. - 1./j);
