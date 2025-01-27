@@ -38,7 +38,7 @@ def _dct2dlt_iter(jxb, i):
 def dct2dlt(b):
     """JAX implementation of dct2dlt"""
 
-    n = b.size
+    n = b.shape[-1]
     i = jax.lax.iota(int, n)
     _, x = jax.lax.scan(_dct2dlt_init, 1.0, i)
     _, a = jax.lax.scan(_dct2dlt_iter, (i, x, b), i)
@@ -72,7 +72,7 @@ def _dlt2dct_iter(jxa, i):
 def dlt2dct(a):
     """JAX implementation of dlt2dct"""
 
-    n = a.size
+    n = a.shape[-1]
     i = jax.lax.iota(int, n)
     _, x = jax.lax.scan(_dlt2dct_init, 1.0, i)
     _, b = jax.lax.scan(_dlt2dct_iter, (i, x, a), i)
