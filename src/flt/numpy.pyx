@@ -12,54 +12,8 @@ cdef extern:
                             unsigned int, double*)
 
 
-def dct2dlt(a):
-    """
-    Convert DCT coefficients to DLT coefficients.
-
-    Parameters
-    ----------
-    a : (n,) array
-        DCT coefficients.
-
-    Returns
-    -------
-    b : (n,) array
-        DLT coefficients.
-
-    """
-
-    # length n of the transform
-    n = a.size
-
-    # output array
-    b = np.empty(n, dtype=float)
-
-    # memview for C interop
-    cdef double[::1] _a = a
-    cdef double[::1] _b = b
-
-    # transform DCT coefficients to DLT coefficients using C function
-    _dct2dlt(n, 1, &_a[0], 1, &_b[0])
-
-    # done
-    return b
-
-
-def dlt2dct(b):
-    """
-    Convert DLT coefficients to DCT coefficients.
-
-    Parameters
-    ----------
-    b : (n,) array
-        DLT coefficients.
-
-    Returns
-    -------
-    a : (n,) array
-        DCT coefficients.
-
-    """
+def dct2dlt(b):
+    """Cython implementation of dct2dlt"""
 
     # length n of the transform
     n = b.size
@@ -71,11 +25,31 @@ def dlt2dct(b):
     cdef double[::1] _a = a
     cdef double[::1] _b = b
 
-    # transform DLT coefficients to DCT coefficients using C function
-    _dlt2dct(n, 1, &_b[0], 1, &_a[0])
+    # transform DCT coefficients to DLT coefficients using C function
+    _dct2dlt(n, 1, &_b[0], 1, &_a[0])
 
     # done
     return a
+
+
+def dlt2dct(a):
+    """Cython implementation of dlt2dct"""
+
+    # length n of the transform
+    n = a.size
+
+    # output array
+    b = np.empty(n, dtype=float)
+
+    # memview for C interop
+    cdef double[::1] _a = a
+    cdef double[::1] _b = b
+
+    # transform DLT coefficients to DCT coefficients using C function
+    _dlt2dct(n, 1, &_a[0], 1, &_b[0])
+
+    # done
+    return b
 
 
 flt.generic.dct.register(np.ndarray, scipy.fft.dct)
