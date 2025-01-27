@@ -1,3 +1,4 @@
+src/flt/numpy.c
 *.egg-info/
 build/
-src/flt/base.c
+docs/_build

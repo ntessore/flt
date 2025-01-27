@@ -1,6 +1,7 @@
 [build-system]
 requires = [
     "setuptools>=74.1",
+    "setuptools-scm>=8",
     "wheel",
     "Cython",
 ]
@@ -8,23 +9,33 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flt"
-version = "2025.1"
 maintainers = [
     { name = "Nicolas Tessore", email = "n.tessore@ucl.ac.uk" },
 ]
-description = "Fast Legendre transform"
+description = "Fast Legendre transform for NumPy and JAX"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-requires-python = ">=3.6"
-dependencies = [
-    "numpy",
-    "scipy",
-]
+requires-python = ">=3.9"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { text = "MIT" }
+dynamic = ["version"]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "numpy",
+    "scipy",
+    "jax",
+]
+doc = [
+    "sphinx",
+    "furo",
+    "sphinxcontrib-katex",
+    "numpydoc",
+]
 
 [project.urls]
 Homepage = "https://github.com/ntessore/flt"
@@ -39,4 +50,6 @@ include-package-data = false
 
 [[tool.setuptools.ext-modules]]
 name = "flt.numpy"
-sources = ["src/flt/base.pyx", "src/dctdlt.c"]
+sources = ["src/flt/numpy.pyx", "src/dctdlt.c"]
+
+[tool.setuptools_scm]
