@@ -232,4 +232,6 @@ def theta(n, *, xp=None):
     if xp is None:
         import numpy as xp
 
-    return xp.pi / n * (xp.arange(n, dtype=float) + 0.5)
+    x = xp.linspace(0.0, 1.0, n + 1)
+
+    return xp.pi / 2 * (x[:-1] + x[1:])

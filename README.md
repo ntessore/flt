@@ -22,7 +22,7 @@ issue on GitHub if you would like to see anything added.
 The `flt` package supports generic array backends via single dispatch.
 Currently available implementations are:
 
-- NumPy
+- NumPy (+SciPy)
 - JAX
 
 Other implementations are easily added, even from third-party code, and will be
