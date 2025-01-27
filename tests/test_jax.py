@@ -19,7 +19,7 @@ def test_dlt(n, rng):
     np.testing.assert_allclose(out, a)
 
 
-@pytest.mark.parametrize("n", [1, 10, 11, 100, 101])
+@pytest.mark.parametrize("n", [1, 10, 11, 100, 101, 1000, 1001])
 def test_dlt_grads(n, rng):
     a = rng.uniform(0, 1, size=n)
     jax.test_util.check_grads(flt.dlt, (a,), 2)
@@ -36,7 +36,7 @@ def test_idlt(n, rng):
     np.testing.assert_allclose(out, f)
 
 
-@pytest.mark.parametrize("n", [1, 10, 11, 100, 101])
+@pytest.mark.parametrize("n", [1, 10, 11, 100, 101, 1000, 1001])
 def test_idlt_grads(n, rng):
     a = rng.uniform(0, 1, size=n)
     jax.test_util.check_grads(flt.idlt, (a,), 2)

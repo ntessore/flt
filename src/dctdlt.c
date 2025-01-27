@@ -18,7 +18,7 @@
 //     Computing, 12(1), 158-179.
 //
 
-#define DCTDLT_VERSION 20221017L
+#define DCTDLT_VERSION 20250124L
 
 
 // dctdlt

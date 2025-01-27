@@ -5,56 +5,79 @@ import jax.scipy.fft
 import flt.generic
 
 
-def _dct2dlt_row(i, n):
-    """Return row *i* of the dct2dlt matrix of size *n*"""
-    j = jnp.arange(i + 2, n, 2)
-    if i == 0:
-        x = 2 * jnp.multiply.accumulate(1 - 4 / (j + 1))
-    else:
-        x = jnp.multiply.accumulate(
-            (1 + 2 / (j - 2)) * (1 - 3 / (j + i + 1)) * (1 - 3 / (j - i))
-        )
-    return jnp.concatenate([jnp.asarray([1.0]), x])
+@jax.jit
+def _dct2dlt_init(x, j):
+    """compute initial row of L matrix"""
+    even = j % 2 == 0
+    y = jax.lax.select(even, x * (1 - 4 / (j + 3)), x)
+    y = jax.lax.select(j == 0, 2 * y, y)
+    z = jax.lax.select(even, x, 0.0)
+    return y, z
 
 
 @jax.jit
-def dct2dlt(a):
+def _dct2dlt_iter(jxb, i):
+    """compute next row of L matrix
+
+    uses the recurrence
+    L[i+1, j] = L[i, j-1] * (1 + 2/(2i+1)) * (1 + 1/(j-1)) * (1 - 3/(i+j+2))
+
+    """
+    j, x, b = jxb
+    a = jnp.dot(x, b)
+    x = jnp.roll(x, 1) * jax.lax.select_n(
+        1 + (i + 1 < j) - (i + 1 > j),
+        jax.lax.zeros_like_array(x),
+        (1 + 1 / (2 * j - 1)),
+        (1 + 2 / (2 * i + 1)) * (1 + 1 / (j - 1)) * (1 - 3 / (i + j + 2)),
+    )
+    return (j, x, b), a
+
+
+@jax.jit
+def dct2dlt(b):
     """JAX implementation of dct2dlt"""
 
-    n = a.size
-    out = []
-    z = 0.5 / n
-    for i in range(n):
-        y = _dct2dlt_row(i, n)
-        out.append(z * jnp.dot(y, a[i::2]))
-        z = z / (1 - 0.5 / (i + 1))
-
-    return jnp.asarray(out)
-
-
-def _dlt2dct_row(i, n):
-    """Return row *i* of the dlt2dct matrix of size *n*"""
-    j = jnp.arange(i + 2, n, 2)
-    if i == 0:
-        x = jnp.multiply.accumulate((1 - 1 / j) * (1 - 1 / j))
-    else:
-        x = jnp.multiply.accumulate((1 - 1 / (j - i)) * (1 - 1 / (j + i)))
-    return jnp.concatenate([jnp.asarray([1.0]), x])
+    n = b.size
+    i = jax.lax.iota(int, n)
+    _, x = jax.lax.scan(_dct2dlt_init, 1.0, i)
+    _, a = jax.lax.scan(_dct2dlt_iter, (i, x, b), i)
+    # apply dct normalisation
+    return a / (2 * n)
 
 
 @jax.jit
-def dlt2dct(b):
+def _dlt2dct_init(x, j):
+    """compute initial row of M matrix"""
+    k = j // 2 * 2
+    y = x * (1 - 1 / (k + 2))
+    return y, (k - j + 1) * x
+
+
+@jax.jit
+def _dlt2dct_iter(jxa, i):
+    """compute next row of M matrix
+
+    uses the recurrence
+    M[i+1, j] = M[i, j-1] * (1 - 1 / (i + j + 1))
+
+    """
+    j, x, a = jxa
+    b = jnp.dot(x, a)
+    x = (j > i) * jnp.roll(x, 1) * (1 - 1 / (i + j + 1))
+    return (j, x, a), b
+
+
+@jax.jit
+def dlt2dct(a):
     """JAX implementation of dlt2dct"""
 
-    n = b.size
-    out = []
-    z = 2.0 * n
-    for i in range(n):
-        y = _dlt2dct_row(i, n)
-        out.append(z * jnp.dot(y, b[i::2]))
-        z = z * (1 - 0.5 / (i + 1))
-
-    return jnp.asarray(out)
+    n = a.size
+    i = jax.lax.iota(int, n)
+    _, x = jax.lax.scan(_dlt2dct_init, 1.0, i)
+    _, b = jax.lax.scan(_dlt2dct_iter, (i, x, a), i)
+    # apply dct normalisation
+    return b * (2 * n)
 
 
 flt.generic.dct.register(jax.Array, jax.scipy.fft.dct)

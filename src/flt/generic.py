@@ -48,43 +48,43 @@ def idct(x):
 
 
 @functools.singledispatch
-def dct2dlt(a):
+def dct2dlt(b):
     """
     Convert DCT coefficients to DLT coefficients.
 
     Parameters
     ----------
-    a : (n,) array
+    b : (n,) array
         DCT coefficients.
 
     Returns
     -------
-    b : (n,) array
+    a : (n,) array
         DLT coefficients.
 
     """
 
-    return _dispatch(dct2dlt, a)
+    return _dispatch(dct2dlt, b)
 
 
 @functools.singledispatch
-def dlt2dct(b):
+def dlt2dct(a):
     """
     Convert DLT coefficients to DCT coefficients.
 
     Parameters
     ----------
-    b : (n,) array
+    a : (n,) array
         DLT coefficients.
 
     Returns
     -------
-    a : (n,) array
+    b : (n,) array
         DCT coefficients.
 
     """
 
-    return _dispatch(dlt2dct, b)
+    return _dispatch(dlt2dct, a)
 
 
 @functools.singledispatch
