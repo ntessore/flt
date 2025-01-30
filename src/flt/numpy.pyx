@@ -1,5 +1,7 @@
 # cython: language_level=3, boundscheck=False, embedsignature=True
 
+from functools import partial
+
 import numpy as np
 import scipy.fft
 
@@ -54,5 +56,7 @@ def dlt2dct(a):
 
 flt.generic.dct.register(np.ndarray, scipy.fft.dct)
 flt.generic.idct.register(np.ndarray, scipy.fft.idct)
+flt.generic.dct1.register(np.ndarray, partial(scipy.fft.dct, type=1))
+flt.generic.idct1.register(np.ndarray, partial(scipy.fft.idct, type=1))
 flt.generic.dct2dlt.register(np.ndarray, dct2dlt)
 flt.generic.dlt2dct.register(np.ndarray, dlt2dct)
