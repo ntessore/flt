@@ -18,7 +18,7 @@
 //     Computing, 12(1), 158-179.
 //
 
-#define DCTDLT_VERSION 20250124L
+#define DCTDLT_VERSION 20221017L
 
 
 // dctdlt
@@ -44,11 +44,11 @@ void dctdlt(unsigned int n, unsigned int stride_in, const double* dct,
     double a, b;
     unsigned int i, j;
 
-    a = 0.5/n;
-    b = 1./n;
+    a = 1.;
+    b = 2.;
     if(n > 0)
     {
-        *dlt = dct[0] / (2.*n);
+        *dlt = dct[0];
         for(j = 2; j < n; j += 2)
         {
             b *= (1 - 4./(j+1.));
@@ -93,11 +93,11 @@ void dltdct(unsigned int n, unsigned int stride_in, const double* dlt,
     double a, b;
     unsigned int i, j;
 
-    a = 2.*n;
-    b = 2.*n;
+    a = 1.;
+    b = 1.;
     if(n > 0)
     {
-        *dct = b * dlt[0];
+        *dct = dlt[0];
         for(j = 2; j < n; j += 2)
         {
             b *= (1. - 1./j)*(1. - 1./j);

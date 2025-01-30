@@ -42,8 +42,7 @@ def dct2dlt(b):
     i = jax.lax.iota(int, n)
     _, x = jax.lax.scan(_dct2dlt_init, 1.0, i)
     _, a = jax.lax.scan(_dct2dlt_iter, (i, x, b), i)
-    # apply dct normalisation
-    return a / (2 * n)
+    return a
 
 
 @jax.jit
@@ -76,8 +75,7 @@ def dlt2dct(a):
     i = jax.lax.iota(int, n)
     _, x = jax.lax.scan(_dlt2dct_init, 1.0, i)
     _, b = jax.lax.scan(_dlt2dct_iter, (i, x, a), i)
-    # apply dct normalisation
-    return b * (2 * n)
+    return b
 
 
 flt.generic.dct.register(jax.Array, jax.scipy.fft.dct)

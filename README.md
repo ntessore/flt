@@ -4,7 +4,7 @@
 
 This is a minimal Python package for fast discrete Legendre transforms (DLTs).
 The implementation uses a recursive version of the matrix relations by Alpert &
-Rokhlin (1991) to compute the DLT via a discrete cosine transform (DCT-II).
+Rokhlin (1991) to compute the DLT via a discrete cosine transform (DCT).
 
 The package can be installed using pip:
 
