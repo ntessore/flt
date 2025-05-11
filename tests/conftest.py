@@ -37,7 +37,12 @@ def n(request):
 
 @pytest.fixture(params=[False, True])
 def closed(request):
-    return request.param
+    closed = request.param
+    if "xp" in request.fixturenames:
+        xp = request.getfixturevalue("xp")
+        if closed and xp.__name__ == "jax.numpy":
+            pytest.skip("no closed transform for jax")
+    return closed
 
 
 @pytest.fixture
