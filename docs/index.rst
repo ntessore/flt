@@ -59,5 +59,6 @@ API
 .. autofunction:: flt.dlt
 .. autofunction:: flt.idlt
 .. autofunction:: flt.theta
+.. autofunction:: flt.quadrature
 .. autofunction:: flt.dct2dlt
 .. autofunction:: flt.dlt2dct

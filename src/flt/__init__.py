@@ -8,6 +8,7 @@ __all__ = [
     "theta",
     "dct2dlt",
     "dlt2dct",
+    "quadrature",
 ]
 
 from flt.generic import (
@@ -16,4 +17,5 @@ from flt.generic import (
     theta,
     dct2dlt,
     dlt2dct,
+    quadrature,
 )

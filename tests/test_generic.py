@@ -29,3 +29,12 @@ def test_idlt(xp, n, closed, rng):
 
     assert isinstance(out, type(a))
     np.testing.assert_allclose(out, f)
+
+
+def test_quadrature(xp, n, closed, rng):
+    a = xp.asarray(rng.uniform(0.0, 1.0, size=n))
+    w = flt.quadrature(n, closed, xp=xp)
+
+    coeff = flt.dlt(a, closed=closed)
+
+    np.testing.assert_allclose(w @ a, 2 * coeff[0])

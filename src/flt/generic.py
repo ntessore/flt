@@ -318,3 +318,78 @@ def theta(n, closed=False, *, xp=None):
         t = (t[:-1] + t[1:]) / 2
 
     return t
+
+
+def quadrature(n, closed=False, *, xp=None):
+    r"""
+    Compute a quadrature rule for *n* points.
+
+    Returns a set of weights to numerically integrate the function given
+    at the *n* nodes :math:`\cos(\theta)` returned by :func:`flt.theta`.
+
+    The quadrature is exact for band-limited functions, and corresponds
+    to the monopole of the FLT, so that ``flt.quadrature(n) @ x`` is
+    equal to ``2 * flt.dlt(x)[0]`` to numerical precision.
+
+    >>> n = 20
+    >>> x = np.random.rand(n)
+    >>> flt.quadrature(n) @ x
+    1.0377474091871635
+    >>> 2 * flt.dlt(x)[0]
+    1.0377474091871632
+
+    Parameters
+    ----------
+    n : int
+        Number of nodes.
+    closed : bool, optional
+        Compute weights for the open (``closed=False``) or closed
+        (``closed=True``) interval.
+    xp : array namespace, optional
+        Return an array from this array namespace.  By default,
+        ``numpy`` is used.
+
+    Returns
+    -------
+    weights : array_like (n,)
+        Weights of the quadrature rule.
+
+    Notes
+    -----
+    Computes the weights :math:`w_1, \ldots, w_n` of the quadrature rule
+
+    .. math::
+
+        \int_{0}^{\pi} \! f(\cos\theta) \, d\theta
+        \approx \sum_{i=1}^{n} w_i \, f(\cos\theta_i) \;,
+
+    where the points :math:`\theta_1, \ldots, \theta_n` are those of the
+    function :func:`flt.theta`.  The integral is twice the monopole of
+    the FLT,
+
+    .. math::
+
+        \int_{0}^{\pi} \! f(\cos\theta) \, d\theta
+        = \int_{0}^{\pi} \! f(\cos\theta) \, P_0(\cos\theta) \, d\theta
+        = 2 a_0 \;.
+
+    For band-limited functions, the FLT computes the monopole exactly
+    (to numerical precision), and the function returns the corresponding
+    set of quadrature weights: for the open interval, this is Fejér's
+    first quadrature rule; for the closed interval, it is
+    Clenshaw--Curtis quadrature.
+
+    """
+
+    if xp is None:
+        xp = np
+
+    b = 4 / (1 - xp.arange(0, n, 2) ** 2)
+    b = xp.stack([b, xp.zeros_like(b)], axis=1)
+    b = b.reshape(-1)[:n]
+    if closed:
+        w = idct1(b)
+        w = w / (1 + (xp.arange(n) % (n - 1) == 0))
+    else:
+        w = idct(b)
+    return w
