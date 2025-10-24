@@ -39,6 +39,13 @@ doc = [
     "sphinxcontrib-katex",
     "numpydoc",
 ]
+numpy = [
+    "numpy",
+    "scipy",
+]
+jax = [
+    "jax",
+]
 
 [project.urls]
 Homepage = "https://github.com/ntessore/flt"
