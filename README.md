@@ -22,8 +22,8 @@ issue on GitHub if you would like to see anything added.
 The `flt` package supports generic array backends via single dispatch.
 Currently available implementations are:
 
-- NumPy (+SciPy)
-- JAX
+- NumPy+SciPy (install with `pip install flt[numpy]`)
+- JAX (install with `pip install flt[jax]`)
 
 Other implementations are easily added, even from third-party code, and will be
 picked up by the `flt` methods automatically.
