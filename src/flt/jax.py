@@ -26,7 +26,7 @@ def dct2dlt(b):
         a = jnp.dot(x, b)
         x = jnp.roll(x, 1) * jax.lax.select_n(
             1 + (i + 1 < j) - (i + 1 > j),
-            jax.lax.zeros_like_array(x),
+            jnp.zeros_like(x),
             (1 + 1 / (2 * j - 1)),
             (1 + 2 / (2 * i + 1)) * (1 + 1 / (j - 1)) * (1 - 3 / (i + j + 2)),
         )
