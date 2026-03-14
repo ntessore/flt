@@ -66,7 +66,15 @@ def dlt2dct(a):
     return b
 
 
+# jax arrays
 flt.generic.dct.register(jax.Array, jax.scipy.fft.dct)
 flt.generic.idct.register(jax.Array, jax.scipy.fft.idct)
 flt.generic.dct2dlt.register(jax.Array, dct2dlt)
 flt.generic.dlt2dct.register(jax.Array, dlt2dct)
+
+
+# jax tracers
+flt.generic.dct.register(jax.core.Tracer, jax.scipy.fft.dct)
+flt.generic.idct.register(jax.core.Tracer, jax.scipy.fft.idct)
+flt.generic.dct2dlt.register(jax.core.Tracer, dct2dlt)
+flt.generic.dlt2dct.register(jax.core.Tracer, dlt2dct)
